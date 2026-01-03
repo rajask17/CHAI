@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chai Supreme | Elite Admin Panel</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #2c1810;
+        --accent: #d4a373;
+        --sidebar-bg: #1a0f0a;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #f4f7f6;
+      }
+      .sidebar {
+        height: 100vh;
+        background: var(--sidebar-bg);
+        color: white;
+        position: fixed;
+        width: 260px;
+        padding-top: 20px;
+      }
+      .main-content {
+        margin-left: 260px;
+        padding: 30px;
+      }
+      .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        border-bottom: 4px solid var(--accent);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+      .nav-link-custom {
+        color: #a0a0a0;
+        padding: 12px 25px;
+        display: block;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      .nav-link-custom:hover, .nav-link-custom.active {
+        color: white;
+        background: rgba(212, 163, 115, 0.2);
+        border-left: 4px solid var(--accent);
+      }
+      .table-box {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+      .badge-cat {
+        background: var(--bg-light);
+        color: var(--primary);
+        border: 1px solid var(--accent);
+      }
+      #camera-preview {
+        width: 100%;
+        max-width: 300px;
+        border-radius: 10px;
+        display: none;
+        margin-top: 10px;
+      }
+
+      /* LIVE CAMERA STYLES */
+      #shop-live-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        display: none;
+        z-index: 9999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #big-shop-video {
+        width: 90%;
+        max-height: 80vh;
+        border: 3px solid var(--accent);
+        border-radius: 15px;
+        background: #222;
+      }
+      .live-label {
+        color: white;
+        background: red;
+        padding: 5px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        animation: blink 1s infinite;
+      }
+      @keyframes blink { 0% {opacity:1} 50% {opacity:0.2} 100% {opacity:1} }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="text-center mb-4">
+        <i class="fas fa-mug-hot fa-2x text-warning"></i>
+        <h4 class="mt-2 brand-font">CHAI SUPREME</h4>
+        <small class="text-muted">Elite Admin</small>
+      </div>
+      <a href="#" class="nav-link-custom active"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+      
+      <a href="#" class="nav-link-custom" onclick="openShopLive()"><i class="fas fa-video me-2 text-danger"></i> Shop Live View</a>
+      
+      <a href="#" class="nav-link-custom" onclick="location.reload()"><i class="fas fa-sync me-2"></i> Refresh Data</a>
+      <a href="index.html" class="nav-link-custom"><i class="fas fa-eye me-2"></i> View Store</a>
+      <div class="position-absolute bottom-0 w-100 p-3">
+        <button class="btn btn-outline-danger btn-sm w-100" onclick="resetAllData()">RESET SYSTEM</button>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Operational Dashboard</h3>
+        <span class="badge bg-dark p-2" id="current-time"></span>
+      </div>
+
+      <div class="row g-4 mb-5">
+        <div class="col-md-4">
+          <div class="stat-card">
+            <h6 class="text-muted">TOTAL REVENUE</h6>
+            <h2 class="fw-bold text-success">₹<span id="stat-revenue">0</span></h2>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card">
+            <h6 class="text-muted">TOTAL ORDERS</h6>
+            <h2 class="fw-bold text-primary" id="stat-orders">0</h2>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="stat-card">
+            <h6 class="text-muted">ACTIVE MENU ITEMS</h6>
+            <h2 class="fw-bold text-warning" id="stat-items">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="table-box">
+            <h5 class="mb-4">Add New Item</h5>
+            <form id="add-item-form">
+              <div class="mb-3">
+                <label class="form-label small">Item Name</label>
+                <input type="text" id="name" class="form-control" placeholder="e.g. Masala Tea" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label small">Category</label>
+                <select id="category" class="form-select">
+                  <option value="Beverages">Beverages</option>
+                  <option value="Bakery Items">Bakery Items</option>
+                  <option value="Savory Snacks">Savory Snacks</option>
+                  <option value="Desserts & Treats">Desserts & Treats</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small">Price (₹)</label>
+                <input type="number" id="price" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label small">Image Link</label>
+                <div class="input-group">
+                  <input type="text" id="img-link" class="form-control" placeholder="https://..." />
+                  <button type="button" class="btn btn-outline-secondary" onclick="startCamera()"><i class="fas fa-camera"></i></button>
+                </div>
+                <video id="camera-preview" autoplay playsinline></video>
+                <canvas id="photo-canvas" style="display:none"></canvas>
+                <button type="button" id="capture-btn" class="btn btn-sm btn-success w-100 mt-2" style="display:none" onclick="takePhoto()">Capture Photo</button>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 rounded-pill">SAVE ITEM</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <div class="table-box">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="m-0">Menu Management</h5>
+              <input type="text" id="search-menu" class="form-control form-control-sm w-50" placeholder="Search item..." onkeyup="loadMenuTable()">
+            </div>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="menu-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="shop-live-overlay">
+        <div class="live-label">LIVE SHOP VIEW</div>
+        <video id="big-shop-video" autoplay playsinline muted></video>
+        <button class="btn btn-light rounded-pill px-5 mt-4 fw-bold" onclick="closeShopLive()">
+            <i class="fas fa-arrow-left me-2"></i> BACK TO DASHBOARD
+        </button>
+    </div>
+
+    <script>
+      // Load current menu items from local storage
+      // Intha vari thaan (line 166) data-vai thirumba edukkum
+      let menuItems = JSON.parse(localStorage.getItem("menuItems")) || [];
+      
+      function updateStats() {
+        document.getElementById("stat-revenue").innerText = localStorage.getItem("chai_totalRevenue") || 0;
+        document.getElementById("stat-orders").innerText = localStorage.getItem("chai_totalOrders") || 0;
+        document.getElementById("stat-items").innerText = menuItems.length;
+        document.getElementById("current-time").innerText = new Date().toLocaleString();
+      }
+
+      function loadMenuTable() {
+        const tbody = document.getElementById("menu-tbody");
+        const searchTerm = document.getElementById("search-menu").value.toLowerCase();
+        tbody.innerHTML = "";
+        
+        menuItems.forEach((item, index) => {
+          if(item.name.toLowerCase().includes(searchTerm)) {
+            tbody.innerHTML += `
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="${item.img}" width="40" height="40" class="rounded me-2" style="object-fit:cover">
+                    <span>${item.name}</span>
+                  </div>
+                </td>
+                <td><span class="badge badge-cat text-dark">${item.category}</span></td>
+                <td class="fw-bold">₹${item.price}</td>
+                <td>
+                  <button class="btn btn-sm btn-danger" onclick="deleteItem(${index})"><i class="fas fa-trash"></i></button>
+                </td>
+              </tr>
+            `;
+          }
+        });
+      }
+
+      document.getElementById("add-item-form").onsubmit = function(e) {
+        e.preventDefault();
+        const newItem = {
+          id: Date.now(),
+          name: document.getElementById("name").value,
+          category: document.getElementById("category").value,
+          price: Number(document.getElementById("price").value),
+          img: document.getElementById("img-link").value || "https://images.unsplash.com/photo-1544787210-22bb83063bd5?w=400"
+        };
+        
+        menuItems.push(newItem);
+        // LOCALSTORAGE-IL SAVE SEIYUM IDAM
+        localStorage.setItem("menuItems", JSON.stringify(menuItems)); 
+        this.reset();
+        loadMenuTable();
+        updateStats();
+        alert("Item added successfully!");
+      };
+
+      function deleteItem(index) {
+        if(confirm("Delete this item?")) {
+          menuItems.splice(index, 1);
+          // DELETE PANNAMAL IRUKKA KAVANIYUNGA
+          localStorage.setItem("menuItems", JSON.stringify(menuItems)); 
+          loadMenuTable();
+          updateStats();
+        }
+      }
+
+      function resetAllData() {
+        if(confirm("Danger! This will clear all orders and revenue. Continue?")) {
+          localStorage.setItem("chai_totalRevenue", "0");
+          localStorage.setItem("chai_totalOrders", "0");
+          location.reload();
+        }
+      }
+
+      let stream;
+      async function startCamera() {
+        const video = document.getElementById("camera-preview");
+        const capBtn = document.getElementById("capture-btn");
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          video.srcObject = stream;
+          video.style.display = "block";
+          capBtn.style.display = "block";
+        } catch (err) {
+          alert("Camera access denied!");
+        }
+      }
+
+      function takePhoto() {
+        const video = document.getElementById("camera-preview");
+        const canvas = document.getElementById("photo-canvas");
+        const imgInput = document.getElementById("img-link");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+        const dataUrl = canvas.toDataURL("image/jpeg");
+        imgInput.value = dataUrl;
+        if(stream) stream.getTracks().forEach(track => track.stop());
+        video.style.display = "none";
+        document.getElementById("capture-btn").style.display = "none";
+      }
+
+      let shopStream;
+      async function openShopLive() {
+          const overlay = document.getElementById("shop-live-overlay");
+          const video = document.getElementById("big-shop-video");
+          try {
+              shopStream = await navigator.mediaDevices.getUserMedia({ video: true });
+              video.srcObject = shopStream;
+              overlay.style.display = "flex";
+          } catch (err) {
+              alert("Shop Camera Access Denied!");
+          }
+      }
+
+      function closeShopLive() {
+          const overlay = document.getElementById("shop-live-overlay");
+          if (shopStream) {
+              shopStream.getTracks().forEach(track => track.stop());
+          }
+          overlay.style.display = "none";
+      }
+
+      window.onload = () => {
+        updateStats();
+        loadMenuTable();
+      };
+      
+      setInterval(updateStats, 3000); 
+    </script>
+  </body>
+</html>
