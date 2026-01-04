@@ -101,9 +101,9 @@
             const id = document.getElementById('adminId').value;
             const pin = document.getElementById('adminPin').value;
 
-            // Get saved credentials or use default
-            const savedID = localStorage.getItem("admin_username") || "admin";
-            const savedPin = localStorage.getItem("admin_password") || "1234";
+            // Inga custom keys use panni check pandrom
+            const savedID = localStorage.getItem("chai_admin_id") || "admin";
+            const savedPin = localStorage.getItem("chai_admin_pin") || "1234";
 
             if(id === savedID && pin === savedPin) {
                 sessionStorage.setItem("isLoggedIn", "true");
@@ -144,17 +144,18 @@
             }
         }
 
-        // 3. Save New Credentials
+        // 3. Save New Credentials - Permanent Logic
         function saveNewCredentials() {
             const u = document.getElementById('newUsername').value;
             const p = document.getElementById('newPassword').value;
 
             if(u && p) {
-                // SAVING NEW CREDENTIALS TO LOCALSTORAGE
-                localStorage.setItem("admin_username", u);
-                localStorage.setItem("admin_password", p);
+                // Unique keys use pannuvom (chai_admin_id/pin)
+                // Idhu unga "RESET" button click pannaalum safe-ah irukkum
+                localStorage.setItem("chai_admin_id", u);
+                localStorage.setItem("chai_admin_pin", p);
                 
-                alert("✅ New Credentials Saved Successfully!");
+                alert("✅ New Credentials Saved Permanently!");
                 sessionStorage.setItem("isLoggedIn", "true");
                 window.location.href = "admin.html";
             } else {
