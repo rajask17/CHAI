@@ -102,15 +102,9 @@
         animation: blink 1s infinite;
       }
       @keyframes blink {
-        0% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.2;
-        }
-        100% {
-          opacity: 1;
-        }
+        0% { opacity: 1; }
+        50% { opacity: 0.2; }
+        100% { opacity: 1; }
       }
     </style>
   </head>
@@ -121,25 +115,12 @@
         <h4 class="mt-2 brand-font">CHAI SUPREME</h4>
         <small class="text-muted">Elite Admin</small>
       </div>
-      <a href="#" class="nav-link-custom active"
-        ><i class="fas fa-chart-line me-2"></i> Dashboard</a
-      >
-      <a href="#" class="nav-link-custom" onclick="openShopLive()"
-        ><i class="fas fa-video me-2 text-danger"></i> Shop Live View</a
-      >
-      <a href="#" class="nav-link-custom" onclick="location.reload()"
-        ><i class="fas fa-sync me-2"></i> Refresh Data</a
-      >
-      <a href="index.html" class="nav-link-custom"
-        ><i class="fas fa-eye me-2"></i> View Store</a
-      >
+      <a href="#" class="nav-link-custom active"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+      <a href="#" class="nav-link-custom" onclick="openShopLive()"><i class="fas fa-video me-2 text-danger"></i> Shop Live View</a>
+      <a href="#" class="nav-link-custom" onclick="location.reload()"><i class="fas fa-sync me-2"></i> Refresh Data</a>
+      <a href="index.html" class="nav-link-custom"><i class="fas fa-eye me-2"></i> View Store</a>
       <div class="position-absolute bottom-0 w-100 p-3">
-        <button
-          class="btn btn-outline-danger btn-sm w-100"
-          onclick="resetAllData()"
-        >
-          RESET SYSTEM
-        </button>
+        <button class="btn btn-outline-danger btn-sm w-100" onclick="resetSystem()">RESET SYSTEM</button>
       </div>
     </div>
 
@@ -153,9 +134,7 @@
         <div class="col-md-4">
           <div class="stat-card">
             <h6 class="text-muted">TOTAL REVENUE</h6>
-            <h2 class="fw-bold text-success">
-              ₹<span id="stat-revenue">0</span>
-            </h2>
+            <h2 class="fw-bold text-success">₹<span id="stat-revenue">0</span></h2>
           </div>
         </div>
         <div class="col-md-4">
@@ -175,17 +154,12 @@
       <div class="row g-4">
         <div class="col-lg-4">
           <div class="table-box">
-            <h5 class="mb-4">Add New Item</h5>
+            <h5 class="mb-4" id="form-title">Add New Item</h5>
             <form id="add-item-form">
+              <input type="hidden" id="edit-index" value="-1">
               <div class="mb-3">
                 <label class="form-label small">Item Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  class="form-control"
-                  placeholder="e.g. Masala Tea"
-                  required
-                />
+                <input type="text" id="name" class="form-control" placeholder="e.g. Masala Tea" required />
               </div>
               <div class="mb-3">
                 <label class="form-label small">Category</label>
@@ -204,35 +178,15 @@
               <div class="mb-3">
                 <label class="form-label small">Image Link</label>
                 <div class="input-group">
-                  <input
-                    type="text"
-                    id="img-link"
-                    class="form-control"
-                    placeholder="https://..."
-                  />
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary"
-                    onclick="startCamera()"
-                  >
-                    <i class="fas fa-camera"></i>
-                  </button>
+                  <input type="text" id="img-link" class="form-control" placeholder="https://..." />
+                  <button type="button" class="btn btn-outline-secondary" onclick="startCamera()"><i class="fas fa-camera"></i></button>
                 </div>
                 <video id="camera-preview" autoplay playsinline></video>
                 <canvas id="photo-canvas" style="display: none"></canvas>
-                <button
-                  type="button"
-                  id="capture-btn"
-                  class="btn btn-sm btn-success w-100 mt-2"
-                  style="display: none"
-                  onclick="takePhoto()"
-                >
-                  Capture Photo
-                </button>
+                <button type="button" id="capture-btn" class="btn btn-sm btn-success w-100 mt-2" style="display: none" onclick="takePhoto()">Capture Photo</button>
               </div>
-              <button type="submit" class="btn btn-primary w-100 rounded-pill">
-                SAVE ITEM
-              </button>
+              <button type="submit" id="save-btn" class="btn btn-primary w-100 rounded-pill">SAVE ITEM</button>
+              <button type="button" id="cancel-edit" class="btn btn-light w-100 rounded-pill mt-2" style="display:none" onclick="cancelEdit()">CANCEL EDIT</button>
             </form>
           </div>
         </div>
@@ -241,13 +195,7 @@
           <div class="table-box">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h5 class="m-0">Menu Management</h5>
-              <input
-                type="text"
-                id="search-menu"
-                class="form-control form-control-sm w-50"
-                placeholder="Search item..."
-                onkeyup="loadMenuTable()"
-              />
+              <input type="text" id="search-menu" class="form-control form-control-sm w-50" placeholder="Search item..." onkeyup="loadMenuTable()" />
             </div>
             <div class="table-responsive">
               <table class="table align-middle">
@@ -270,16 +218,10 @@
     <div id="shop-live-overlay">
       <div class="live-label">LIVE SHOP VIEW</div>
       <video id="big-shop-video" autoplay playsinline muted></video>
-      <button
-        class="btn btn-light rounded-pill px-5 mt-4 fw-bold"
-        onclick="closeShopLive()"
-      >
-        <i class="fas fa-arrow-left me-2"></i> BACK TO DASHBOARD
-      </button>
+      <button class="btn btn-light rounded-pill px-5 mt-4 fw-bold" onclick="closeShopLive()"><i class="fas fa-arrow-left me-2"></i> BACK TO DASHBOARD</button>
     </div>
 
     <script>
-      // Function to get data
       function getStoredItems() {
         const stored = localStorage.getItem("menuItems");
         return stored ? JSON.parse(stored) : [];
@@ -287,22 +229,16 @@
 
       function updateStats() {
         const items = getStoredItems();
-        document.getElementById("stat-revenue").innerText =
-          localStorage.getItem("chai_totalRevenue") || 0;
-        document.getElementById("stat-orders").innerText =
-          localStorage.getItem("chai_totalOrders") || 0;
+        document.getElementById("stat-revenue").innerText = localStorage.getItem("chai_totalRevenue") || 0;
+        document.getElementById("stat-orders").innerText = localStorage.getItem("chai_totalOrders") || 0;
         document.getElementById("stat-items").innerText = items.length;
-        document.getElementById("current-time").innerText =
-          new Date().toLocaleString();
+        document.getElementById("current-time").innerText = new Date().toLocaleString();
       }
 
       function loadMenuTable() {
         const tbody = document.getElementById("menu-tbody");
-        const searchTerm = document
-          .getElementById("search-menu")
-          .value.toLowerCase();
+        const searchTerm = document.getElementById("search-menu").value.toLowerCase();
         const items = getStoredItems();
-
         tbody.innerHTML = "";
         items.forEach((item, index) => {
           if (item.name.toLowerCase().includes(searchTerm)) {
@@ -317,6 +253,7 @@
                 <td><span class="badge badge-cat text-dark">${item.category}</span></td>
                 <td class="fw-bold">₹${item.price}</td>
                 <td>
+                  <button class="btn btn-sm btn-info me-1 text-white" onclick="editItem(${index})"><i class="fas fa-edit"></i></button>
                   <button class="btn btn-sm btn-danger" onclick="deleteItem(${index})"><i class="fas fa-trash"></i></button>
                 </td>
               </tr>
@@ -325,29 +262,54 @@
         });
       }
 
-      // Save Logic Fixed
       document.getElementById("add-item-form").onsubmit = function (e) {
         e.preventDefault();
         const currentItems = getStoredItems();
+        const editIndex = parseInt(document.getElementById("edit-index").value);
 
         const newItem = {
-          id: Date.now(),
+          id: editIndex === -1 ? Date.now() : currentItems[editIndex].id,
           name: document.getElementById("name").value,
           category: document.getElementById("category").value,
           price: Number(document.getElementById("price").value),
-          img:
-            document.getElementById("img-link").value ||
-            "https://images.unsplash.com/photo-1544787210-22bb83063bd5?w=400",
+          img: document.getElementById("img-link").value || "https://images.unsplash.com/photo-1544787210-22bb83063bd5?w=400",
         };
 
-        currentItems.push(newItem);
-        localStorage.setItem("menuItems", JSON.stringify(currentItems));
+        if (editIndex === -1) {
+          currentItems.push(newItem);
+        } else {
+          currentItems[editIndex] = newItem;
+        }
 
-        this.reset();
+        localStorage.setItem("menuItems", JSON.stringify(currentItems));
+        cancelEdit();
         loadMenuTable();
         updateStats();
-        alert("Item added successfully!");
+        alert(editIndex === -1 ? "Item added!" : "Item updated!");
       };
+
+      function editItem(index) {
+        const items = getStoredItems();
+        const item = items[index];
+        document.getElementById("edit-index").value = index;
+        document.getElementById("name").value = item.name;
+        document.getElementById("category").value = item.category;
+        document.getElementById("price").value = item.price;
+        document.getElementById("img-link").value = item.img;
+        
+        document.getElementById("form-title").innerText = "Edit Menu Item";
+        document.getElementById("save-btn").innerText = "UPDATE ITEM";
+        document.getElementById("cancel-edit").style.display = "block";
+        window.scrollTo(0, 0);
+      }
+
+      function cancelEdit() {
+        document.getElementById("add-item-form").reset();
+        document.getElementById("edit-index").value = "-1";
+        document.getElementById("form-title").innerText = "Add New Item";
+        document.getElementById("save-btn").innerText = "SAVE ITEM";
+        document.getElementById("cancel-edit").style.display = "none";
+      }
 
       function deleteItem(index) {
         if (confirm("Delete this item?")) {
@@ -360,19 +322,14 @@
       }
 
       function resetSystem() {
-        if (
-          confirm(
-            "Confirm reset? Menu and Revenue will be cleared. Login ID will be safe."
-          )
-        ) {
-          // Items-ah mattum remove pannuvom
+        if (confirm("Confirm reset? Menu and Revenue will be cleared.")) {
           localStorage.removeItem("chai_totalRevenue");
           localStorage.removeItem("chai_totalOrders");
+          localStorage.removeItem("menuItems");
           location.reload();
         }
       }
 
-      // Camera & Live View Functions
       let stream;
       async function startCamera() {
         const video = document.getElementById("camera-preview");
@@ -382,9 +339,7 @@
           video.srcObject = stream;
           video.style.display = "block";
           capBtn.style.display = "block";
-        } catch (err) {
-          alert("Camera access denied!");
-        }
+        } catch (err) { alert("Camera access denied!"); }
       }
 
       function takePhoto() {
@@ -405,14 +360,10 @@
         const overlay = document.getElementById("shop-live-overlay");
         const video = document.getElementById("big-shop-video");
         try {
-          shopStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-          });
+          shopStream = await navigator.mediaDevices.getUserMedia({ video: true });
           video.srcObject = shopStream;
           overlay.style.display = "flex";
-        } catch (err) {
-          alert("Shop Camera Access Denied!");
-        }
+        } catch (err) { alert("Shop Camera Access Denied!"); }
       }
 
       function closeShopLive() {
@@ -420,10 +371,7 @@
         document.getElementById("shop-live-overlay").style.display = "none";
       }
 
-      window.onload = () => {
-        updateStats();
-        loadMenuTable();
-      };
+      window.onload = () => { updateStats(); loadMenuTable(); };
     </script>
   </body>
 </html>
